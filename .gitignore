@@ -1,0 +1,13 @@
+*.mp4
+*.gif
+.ipynb_checkpoints
+*~
+
+# Latex files
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.synctex.gz
+*.toc
