@@ -208,7 +208,7 @@
 				P(X_{n+1}|X_{n}, X_{n-1}, \cdots, X_0) = P(X_{n+1}|X_{n})
 			\end{equation*}
 		\item \textbf{Markov Chain Monte Carlo} is a class of algorithms for sampling from a probability distribution based on constructing a Markov chain that has the desired distribution as its equilibrium distribution. \tiny{Wiki}. \normalsize
-		\item Born in the early 1950s in Los Alamos, NM. First implemented on MANIAC computer, built under direction of Nicholas Metropolis. \tiny{Robert et al, 2011}. \normalsize
+%		\item Born in the early 1950s in Los Alamos, NM. First implemented on MANIAC computer, built under direction of Nicholas Metropolis. \tiny{Robert et al, 2011}. \normalsize
 	\end{itemize}
 \end{frame} 
 
@@ -225,7 +225,7 @@
 	\frametitle{How MCMC works - More explicit explanation}
 	\begin{center}
 		\textit{``By collecting a `large' number of pebbles that is likely to come from the mountain, we can `approximately' construct the landscape.''} \\
-		\tiny{Davidson-Pilon}
+		\tiny{Davidson-Pilon} \normalsize
 	\end{center}
 	\begin{itemize}
 		\item Start at current position.
@@ -258,7 +258,7 @@
 		\item It is important to explore the entire `landscape' - there can be useful information within the `black box'.
 		\item The computational cost for getting an output of the `black box` is typically huge - hence rejection rate needs to be minimised!
 		\item Sequences of MCMC samples are based on the assumption that the samples are derived from the pdf of interest, and theory guarantees this condition as the number of iterations approaches \textit{infinity}.
-		\item Unfortunately, no universal threshold exists across all problems! - \textit{ \small{Fonnesbeck, 2014.}}
+		\item Unfortunately, no universal threshold exists across all problems! \tiny{Fonnesbeck, 2014}
 	\end{itemize}
 \end{frame}
 
@@ -316,7 +316,7 @@
 		\item Not many multi-variate distribution to sample from, but we do have several 1D pdfs...
 		\item Main drawback: very poor mixing if variables are highly correlated. 
 		\item Solution: re-parameterise into independent variables. 
-		\item Further problem(!): not as easy for more complicated problems!
+		\item Further problem(!): not as easy for more complicated problems! \tiny{Levine et al, 2003} \normalsize
 	\end{itemize}
 	\begin{figure}[h]
 		\centering
@@ -328,7 +328,7 @@
 \begin{frame}
 	\frametitle{Adaptive direction sampling}
 	\begin{itemize}
-		\item Upgrade from single-component update: choose \textit{direction} and \textit{step size} at random!
+		\item Upgrade from single-component update: choose \textit{direction} and \textit{step size} at random! \tiny{Gilks et al, 1994.} \normalsize
 		\item Pros: improve mixing when choosing `good' directions.
 		\item Cons: choosing `good' directions.
 	\end{itemize}
@@ -342,7 +342,7 @@
 \begin{frame}
 	\frametitle{Resampling from previous samples}
 	\begin{itemize}
-		\item Re-sampling from previous steps to allow easier movement.
+		\item Re-sampling from previous steps to allow easier movement. \tiny{Atchade, 2006} \normalsize
 		\item Arrive at a distribution from re-sampled points that is close to the desired stationary distribution.
 	\end{itemize}
 	\begin{figure}[h]
@@ -355,7 +355,7 @@
 \begin{frame}
 	\frametitle{Sampling from `easier' distribution}
 	\begin{itemize}
-		\item Use samples from a different distributions (usually ones we are familiar with.)
+		\item Use samples from a different distributions (usually ones we are familiar with.) \tiny{Owen, 2000} \normalsize
 		\item Then apply weights to correct over-generation and under-generation.
 		\item Cons: Does not work well in high dimensions.
 	\end{itemize}
