@@ -3,12 +3,20 @@
 \usetheme{metropolis}
 \usepackage{appendixnumberbeamer}
 
+% Add graphics path
+\usepackage{graphicx}
+\graphicspath{ {img/} }
+
+% Animation package
+\usepackage{animate}
+
 \usepackage{booktabs}
 \usepackage[scale=2]{ccicons}
 
 \usepackage{pgfplots}
 \usepgfplotslibrary{dateplot}
 
+% Add connected lines to dot of navigation bar
 \makeatletter
 \setbeamertemplate{headline}{%
 	\begin{beamercolorbox}[colsep=1.5pt]{upper separation line head}
@@ -193,39 +201,186 @@
 
 \begin{frame}
 	\frametitle{What is Markov Chain Monte Carlo?}
-	abc
+	\begin{itemize}
+		\item \textbf{Monte Carlo} is broad class of computational algorithms that rely on repeated random sampling to obtain numerical results. \tiny{Wiki}. \normalsize
+		\item \textbf{Markov chain} are random variables having the property that, given the present, the future is conditionally independent of the past. \tiny{Wiki}. \normalsize
+			\begin{equation*}
+				P(X_{n+1}|X_{n}, X_{n-1}, \cdots, X_0) = P(X_{n+1}|X_{n})
+			\end{equation*}
+		\item \textbf{Markov Chain Monte Carlo} is a class of algorithms for sampling from a probability distribution based on constructing a Markov chain that has the desired distribution as its equilibrium distribution. \tiny{Wiki}. \normalsize
+		\item Born in the early 1950s in Los Alamos, NM. First implemented on MANIAC computer, built under direction of Nicholas Metropolis. \tiny{Robert et al, 2011}. \normalsize
+	\end{itemize}
 \end{frame} 
-
 
 \begin{frame}
-	\frametitle{How MCMC works}
-	abc
+	\frametitle{How MCMC works - The landscape perspective}
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=\textwidth]{mountain}
+		\caption{Exploring the landscape with random stepping.}
+	\end{figure}
 \end{frame} 
 
+\begin{frame}
+	\frametitle{How MCMC works - More explicit explanation}
+	\begin{center}
+		\textit{``By collecting a `large' number of pebbles that is likely to come from the mountain, we can `approximately' construct the landscape.''} \\
+		\tiny{Davidson-Pilon}
+	\end{center}
+	\begin{itemize}
+		\item Start at current position.
+		\item \textbf{Propose moving to a new position} - somewhere near you!
+		\item Accept/Reject the new position and ask how likely the pebble is from the mountain.
+		\begin{itemize}
+			\item If it is: Move to the new position.
+			\item If not: Stay where you are.
+		\end{itemize}
+		\item \textbf{After a large number of iterations}, return all \textit{accepted} positions.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Reasons to use MCMC}
+	\begin{itemize}
+		\item In most cases, MCMC are used for `black box' system - can only obtained the output given an input.
+		\item Preferred method in high-dimension - compared to explicit formula in $N-$dimensions.
+		\item Sampling is easy for a uniform distribution in 1D, but not for more complicated pdfs.
+		\item Also in high dimensions, method like \textit{rejection-acceptance} will be very inefficient - most of the times we will miss!
+	\end{itemize}
+\end{frame}
 
 \section{Major challenges}
 \subsection{The main problems}
-%\subsection{The hardship of 'efficiency'}
 
 \begin{frame}
-	\frametitle{meeb moob}
-	abc
+	\frametitle{Challenges for MCMC}
+	\begin{itemize}
+		\item It is important to explore the entire `landscape' - there can be useful information within the `black box'.
+		\item The computational cost for getting an output of the `black box` is typically huge - hence rejection rate needs to be minimised!
+		\item Sequences of MCMC samples are based on the assumption that the samples are derived from the pdf of interest, and theory guarantees this condition as the number of iterations approaches \textit{infinity}.
+		\item Unfortunately, no universal threshold exists across all problems! - \textit{ \small{Fonnesbeck, 2014.}}
+	\end{itemize}
 \end{frame}
 
 \begin{frame}
-	\frametitle{blub}
-	abc
+	\frametitle{Nostalgic example: HW problem...}
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.8\textwidth]{hw}
+		\caption{Example taken from homework 6 - SE/ME 714.}
+	\end{figure}	
 \end{frame}
 
-\section{Proposed solutions}
 \begin{frame}
-	\frametitle{blob}
-	abc
+	\frametitle{Rapid `mixing'}
+	\begin{itemize}
+		\item `Mixing' indicates how well MCMC samples move through the entire `landscape' of the desired pdf.
+		\item In ideal Monte Carlo methods, our samples are expected to be independent. However, this is not the case for Markov chains.
+		\item Poor mixing is caused by \textit{inappropiate proposed movings} or \textit{highly-correlated variables.}
+		\item Frequently, lack of convergence is caused by poor mixing.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Poor mixing examples}
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=\textwidth]{poor_mixing}
+		\caption{Example of poor mixing.}
+	\end{figure}	
+\end{frame}
+
+\section{Strategies for proposing moves}
+\subsection{Proposing moves}
+
+\begin{frame}
+	\frametitle{Propose moving to a new position}
+	\begin{itemize}
+		\item Designing a good strategy for moving/stepping is hard, and it's depends on the desired pdf. 
+		\item The proposal move is important to design a rapid mixing MCMC. It is normally built using known `randomness' algorithms.
+		\item Known strategies include:
+			\begin{itemize}
+				\item \textbf{Single-component update}: Gibbs sampling, Component-wise Metropolis Hasting, etc.
+				\item \textbf{Adaptive direction sampling}: Hit-and-run, Adaptive direction, etc.
+				\item \textbf{Sample from an `easier' distribution}: Importance sampling, etc.
+				\item \textbf{Re-sampling from the previous samples}
+				\item \textbf{Adopt physical system dynamic}: Hybrid/Hamiltonian MCMC, etc.
+			\end{itemize}
+			... and many more...
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Single-component update}
+	\begin{itemize}
+		\item Not many multi-variate distribution to sample from, but we do have several 1D pdfs...
+		\item Main drawback: very poor mixing if variables are highly correlated. 
+		\item Solution: re-parameterise into independent variables. 
+		\item Further problem(!): not as easy for more complicated problems!
+	\end{itemize}
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.8\textwidth]{reparameterisation}
+		\caption{Re-parameterisation for single-component update.}
+	\end{figure}	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Adaptive direction sampling}
+	\begin{itemize}
+		\item Upgrade from single-component update: choose \textit{direction} and \textit{step size} at random!
+		\item Pros: improve mixing when choosing `good' directions.
+		\item Cons: choosing `good' directions.
+	\end{itemize}
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.5\textwidth]{adaptive-direction}
+		\caption{Adaptive direction sampling}
+	\end{figure}	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Resampling from previous samples}
+	\begin{itemize}
+		\item Re-sampling from previous steps to allow easier movement.
+		\item Arrive at a distribution from re-sampled points that is close to the desired stationary distribution.
+	\end{itemize}
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.8\textwidth]{resampling}
+		\caption{Re-sampling from the past steps.}
+	\end{figure}	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Sampling from `easier' distribution}
+	\begin{itemize}
+		\item Use samples from a different distributions (usually ones we are familiar with.)
+		\item Then apply weights to correct over-generation and under-generation.
+		\item Cons: Does not work well in high dimensions.
+	\end{itemize}
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=\textwidth]{importance-sampling}
+		\caption{Transform the target distribution.}
+	\end{figure}	
+\end{frame}
+
+\begin{frame}
+	\frametitle{(E) Visualising MCMC}
+	Code available: \url{https://github.com/quang-ha/mcmc-sampling}
+	\centering
+		\animategraphics[loop,controls,width=0.63\linewidth]{12}{visualise-}{0}{50}
 \end{frame}
 
 \section{Summary}
-\begin{frame}
-	\frame{Summary}
+\begin{frame}[plain]
+	\frametitle{Summary}
+	\begin{itemize}
+		\item It is important for MCMC sampling strategies to achieve rapid mixing, which improves convergence and reduce overall computational cost.
+		\item There are several strategies to improve the efficiency of MCMC sampling. The choice of strategy needs careful consideration based on the problem.
+		\item There are no global method to check for convergence in MCMC - different attempts have been proposed such as checking autocorrelation function, Gelman-Rubin etc.
+	\end{itemize}
 \end{frame}
 	
 \end{document}
